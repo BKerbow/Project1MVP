@@ -1,0 +1,92 @@
+.green {
+    color: #69bb01;
+}
+.purple {
+    /* color: #551a8b; */
+    color: #7554a3;
+    /* color: #674099 */
+}
+.red {
+    /* color: #ea0000; */
+    color: #710a03
+}
+
+body {
+    font-family: Consolas, Verdana, Geneva, sans-serif;
+    color: #d0d0d0;
+    background-color: #444444;
+}
+
+h1, h2, h3, h4, h5, h6, p, label {
+    color: #69bb01;
+    /* background-color: #555555; */
+}
+
+a {
+    color: #69bb01;
+    text-decoration: none;
+}
+a:hover {
+    /* color: #ea0000; */
+    color: #710A03;
+}
+
+#sp_title {
+    text-align: center;
+}
+
+select, option {
+    color: #69bb01;
+    background-color: #360a5f;
+    border: 1px solid #69bb01;
+}
+
+select:focus {
+    color: #69bb01;
+    outline: 1px solid #69bb01;
+}
+
+/* Text Boxes */
+input[type="text"], input[type="password"], input[type="date"], textarea {
+    color: #360a5f;
+    background-color: #555555;
+    border: 0;
+}
+input[type="text"]:focus, input[type="password"]:focus, input[type="date"]:focus, textarea:focus {
+    outline: 1px solid #69bb01;
+}
+
+/* Buttons */
+input[type="submit"], input[type="button"] {
+    /* color: #d0d0d0; */
+    font-weight: bold;
+    background-color: #69bb01;
+    border: 0;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+input[type="submit"]:hover, input[type="button"]:hover {
+    /* color: #d0d0d0; */
+    /* background-color: #1d1d1d; */
+    color: #69bb01;
+    background-color: #7554a3;
+}
+
+/* Date */
+.container {
+    text-align: center;
+    /* border:solid gold; */
+}
+
+/* .row {
+    border:solid orange;
+} */
+/* .hl {
+    border:solid pink;
+} */
+
+#vert_align {
+    margin-top: 22rem;
+}

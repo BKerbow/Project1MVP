@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editor Menu</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous">
+	<script src='editors.js'></script>
+    <style>
+        table, th, td { border: 1px solid black; }
+        body { margin: 50px; }
+        h1 { text-align: center; }
+        label {
+            width: 100px;
+            display: inline-block;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+    <br>
+    <h1>Welcome to the Editor Menu!</h1>
+    <br>
+    <p>On this page, you will find the following:<br>
+        <p1 style="padding-left: 3em;">1. A button that returns scripts relevant to the currently-logged in editor.<br>
+            <p1 style="padding-left: 6em;">You may also approve a script from the viewing.<br>
+            <p1 style="padding-left:3em;">2. A button that displays any messages from an author.<br>
+            <p1 style="padding-left:3em;">3. A button that displays any messages from another editor.<br>
+            <p1 style="padding-left: 6em;">A) For the editor to type out a request for further information.<br>
+        <p1 style="padding-left: 3em;">4. A button that allows the editor to request more information from an author. <br>
+            <p1 style="padding-left: 6em;">A) For the senior editor, this gives the script the final approval. <br>
+                <p1 style="padding-left: 3em;">5. A button that will allow you to reject a script. You must provide a reason for doing so.<br>
+                    <p1 style="padding-left: 3em;">6. If a story is marked High Priority, only those stories can be interacted with.<br>
+                        <p1 style="padding-left: 3em;">7. A logout button.</p>
+    </p>
+    <button type="button" onclick="getStories()">Open Your Pending Stories</button>
+    <button type="button" onclick="getAuthorMessages()">Display Author Messages</button>
+    <button type="button" onclick="getEditorMessages()">Display Message from Another Editor</button>
+    <button type="button" onclick="infoRequest()">Submit an Info Request</button>
+    <button type="button" onclick="logout()">Logout</button>
+    <button type="button" onclick="infoRequest()">Submit an Info Request</button>
+   
+    <div id="committeeData">
+
+    </div>
+    <div id="authorMessageData">
+
+    </div>
+    <div id="editorMessageData">
+
+    </div>
+    <!-- Bootstrap Script -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-gtEjrD/SeCtmISkJkNUaaKMoLD0//ElJ19smozuHV6z3Iehds+3Ulb9Bn9Plx0x4" crossorigin="anonymous"></script>
+</body>
+</html>

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Information Request</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous">
+    <script src="inforequest.js"></script>
+    <style>
+        body { margin: 50px; }
+        h1 { text-align: center; }
+        h3 { text-align: center; }
+        label {
+            width: 100px;
+            display: inline-block;
+            text-align: left;
+        }
+    </style>
+</head>
+<body onload="getSavedStory()">
+    <br>
+    <h3>Please use the below form to send an information request.</h3> <br>
+    <label for="title">Title</label>
+    <input type="text" id="title"> <br> <br>
+    <label for="fromEditor">Editor name</label>
+    <input type="text" id="fromEditor"> <br> <br>
+    <label for="toAuthor">To Author</label>
+    <input type="text" id="toAuthor"> <br> <br>
+    <label for="receiveEditor">Fellow Editor</label>
+    <input type="text" id="receiveEditor">
+    <label for="editorRequest">Your Message</label>
+    <input type="text" id="editorRequest"> <br> <br>
+    <br>
+    <button type="button" id="submitButton">Submit</button>
+    <button type="button" onclick="goBack()">Go Back</button>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-gtEjrD/SeCtmISkJkNUaaKMoLD0//ElJ19smozuHV6z3Iehds+3Ulb9Bn9Plx0x4" crossorigin="anonymous"></script>
+</body>
+</html>
