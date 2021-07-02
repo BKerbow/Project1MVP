@@ -142,9 +142,11 @@ public class FrontControllerServlet extends HttpServlet {
 		case "get_other_editor_messages":{
 			System.out.println("grabbing editor messages");
 			List<Messages> messages = new ArrayList<Messages>(new MessagesRepo().getAll().values());
+			messages.forEach((m) -> System.out.println(m));
 			Editor e = (Editor) session.getAttribute("logged_in");
 			//String[] mjson = new String[] { this.gson.toJson(messages), this.gson.toJson(e)};
 			json = gson.toJson(e) + "|" + this.gson.toJson(messages);
+			System.out.print(json);
 			response.getWriter().append(json);
 			break;
 		}
@@ -419,13 +421,21 @@ public class FrontControllerServlet extends HttpServlet {
 			new MessagesRepo().add(m);
 			break;
 		}
+		case "reject_script":{
+			JsonElement objs = gson.fromJson(request.getReader(), JsonElement.class);
+			System.out.print(objs);
+			Story s = gson.fromJson(objs, Story.class);
+			s.setApprovalStatus("submitted");
+			new StoryRepo().update(s);
+			break;
+		}
 		case "approve_draft": {
 			Story s = this.gson.fromJson(request.getReader(), Story.class);
 			String type = s.getType().getName();
 			System.out.println("Approving draft for type " + type);
 			switch (type) {
-				case "Novel":
-				case "Novella": {
+				case "novel":
+				case "novella": {
 					Set<Editor> editors = GEJoinServices.getEditors(s.getGenre());
 					Integer count = s.getDraftApprovalCount();
 					count++;
@@ -439,8 +449,8 @@ public class FrontControllerServlet extends HttpServlet {
 					StoryServices.getInstance().updateStory(s);
 					break;
 				}
-				case "Short Story": {
-					System.out.println("Short Story");
+				case "short story": {
+					System.out.println("short story");
 					Integer count = s.getDraftApprovalCount();
 					count++;
 					s.setDraftApprovalCount(count);
@@ -452,8 +462,9 @@ public class FrontControllerServlet extends HttpServlet {
 					StoryServices.getInstance().updateStory(s);
 					break;
 				}
-				case "Article": {
-					s.setApprovalStatus("Approved");
+				case "article": {
+					System.out.println("in approval for article");
+					s.setApprovalStatus("approved");
 					s.setDraftApprovalCount(1);
 					AuthorServices.getInstance().addPoints(s.getAuthor(), s.getType().getPoints());
 					StoryServices.getInstance().submitNextWaitingProposal(s.getAuthor());

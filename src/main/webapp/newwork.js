@@ -4,7 +4,7 @@ function submit(){
     let authorSubmit = {
         title: document.getElementById('title').value,
         genre: document.getElementById("genre").value,
-        storyType: document.getElementById("story_type").value,
+        type: document.getElementById("story_type").value,
         description: document.getElementById("description").value,
         tagLine: document.getElementById("tag_line").value,
         completionStatus: document.getElementById("completion_status").value,

@@ -326,6 +326,19 @@ public class StoryRepo implements GenericRepo<Story> {
 		
 		return false;
 	}
+	
+	public boolean updateReason(Story s) {
+		String sql = "update stories set reason = ? where id = ?;";
+		try {
+			PreparedStatement ps = conn.prepareStatement(sql);
+			ps.setString(1, s.getReason());
+			ps.setInt(2, s.getId());
+			return ps.execute();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
 
 	@Override
 	public boolean delete(Story s) {

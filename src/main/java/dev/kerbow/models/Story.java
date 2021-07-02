@@ -424,15 +424,21 @@ public class Story {
 				story.setId(context.deserialize(jo.get("id"), Integer.class));
 			}
 			story.setTitle(context.deserialize(jo.get("title"), String.class));
-			// TODO: move this to GenreServices!!!
-			JsonElement gElem = jo.get("genre");
-			if (gElem.isJsonObject()) {
-				story.setGenre(context.deserialize(gElem, Genre.class));
-			} else {
-				Genre g = new GenreRepo().getByName(context.deserialize(jo.get("genre"), String.class));
-				story.setGenre(g);
+			// TODO: move this to GenreServices!!
+			
+			if(jo.has("genre")){
+				JsonElement gElem = jo.get("genre");
+				System.out.print(gElem);
+				if (gElem.isJsonObject()) {
+					story.setGenre(context.deserialize(gElem, Genre.class));
+				} else {
+					Genre g = new GenreRepo().getByName(context.deserialize(jo.get("genre"), String.class));
+					story.setGenre(g);
+				}
 			}
 			// TODO: move this to StoryTypeServices!!!
+			
+			
 			JsonElement tElem = jo.get("type");
 			System.out.print(tElem);
 			if (tElem.isJsonObject()) {

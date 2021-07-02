@@ -495,7 +495,6 @@ function getAuthorMessages(){
                     }
 
                     messageTable.append(thRow);
-
                     
                     //Iterate through the stories and create a table row with the date we want
                    // for (message of msgs){
@@ -553,14 +552,11 @@ function getEditorMessages(){
                 let messages = JSON.parse(msgs[1]);
                 console.log(xhttp.responseText);
                 
-
                 //create table
                 let messageTable = document.createElement('table');
                 messageTable.id = 'messageTable';
-                
-                for (let message of messages){
-                    //create table header row
-                    let thRow = document.createElement('tr');
+
+                let thRow = document.createElement('tr');
                     let tHeaders = ['Title', 'From Editor', 'Editor Message'];
                     for (let h of tHeaders){
                         let th = document.createElement('th');
@@ -569,6 +565,10 @@ function getEditorMessages(){
                     }
 
                     messageTable.append(thRow);
+                
+                for (let message of messages){
+                    //create table header row
+                    
 
                     //Iterate through the stories and create a table row with the date we want
                     //for (story of r){

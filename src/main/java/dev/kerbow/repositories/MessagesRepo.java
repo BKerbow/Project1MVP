@@ -29,7 +29,7 @@ public class MessagesRepo implements GenericRepo<Messages> {
 			ps.setInt(1, m.getTitle().getId());
 			ps.setInt(2, m.getFromEditor().getId());
 			ps.setInt(3, m.getAuthor().getId());
-			ps.setNull(4, Types.INTEGER);
+			ps.setInt(4, m.getReceiveEditor().getId());
 			ps.setString(5, m.getEditorMessage());
 			ps.setString(6, m.getAuthorMessage());
 			ResultSet rs = ps.executeQuery();
@@ -203,7 +203,7 @@ public Messages getOtherEditorMessage(String receiveEditor) {
 		Messages m = new Messages();
 		m.setId(rs.getInt("id"));
 		//gotta fix the next two lines to get the right title
-		Story s = (new StoryRepo().getById(rs.getInt("id")));
+		Story s = (new StoryRepo().getById(rs.getInt("title")));
 		m.setTitle(s);
 		Editor e = (new EditorRepo()).getById(rs.getInt("fromEditor"));
 		Editor re = (new EditorRepo()).getById(rs.getInt("receiveEditor"));

@@ -34,7 +34,7 @@ function submit(story){
         console.log("The xhttp status is: " + xhttp.status);
         console.log(xhttp.responseText);
         console.log("Switching to authors.html!");
-        window.location = "/Project1/authors.html";
+        //window.location = "/Project1/authors.html";
     }
 }
 
