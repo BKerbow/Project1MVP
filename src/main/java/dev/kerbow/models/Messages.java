@@ -8,6 +8,8 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 
+import dev.kerbow.repositories.AuthorRepo;
+import dev.kerbow.repositories.EditorRepo;
 import dev.kerbow.repositories.StoryRepo;
 
 public class Messages {
@@ -163,12 +165,30 @@ public class Messages {
 			if (je.isJsonObject()) {
 				m.setTitle(context.deserialize(jo.get("title"), Story.class));
 			} else {
-				//Story title = new StoryRepo().getByTitle(context.deserialize(jo.get("title"), String.class));
-			//	m.setTitle(title);
+				Story title = new StoryRepo().getByTitle(context.deserialize(jo.get("title"), String.class));
+				m.setTitle(title);
 			}
-			m.setFromEditor(context.deserialize(jo.get("fromEditor"), Editor.class));
-			m.setAuthor(context.deserialize(jo.get("author"), Author.class));
-			m.setReceiveEditor(context.deserialize(jo.get("receiveEditor"), Editor.class));
+			//Sometimes JSON sends a full object when all I want is a string. This helps to do that.
+			if (je.isJsonObject()) {
+				m.setFromEditor(context.deserialize(jo.get("fromEditor"), Editor.class));
+			} else {
+				Editor e = new EditorRepo().getByFirstName(context.deserialize(jo.get("fromEditor"), String.class));
+				m.setFromEditor(e);
+			}
+			//Same thing here
+			if (je.isJsonObject()) {
+				m.setAuthor(context.deserialize(jo.get("fromAuthor"), Author.class));
+			} else {
+				Author a = new AuthorRepo().getByFirstName(context.deserialize(jo.get("fromAuthor"), String.class));
+				m.setAuthor(a);
+			}
+			//And same thing here
+			if (je.isJsonObject()) {
+				m.setReceiveEditor(context.deserialize(jo.get("receiveEditor"), Editor.class));
+			} else {
+				Editor e = new EditorRepo().getByFirstName(context.deserialize(jo.get("receiveEditor"), String.class));
+				m.setReceiveEditor(e);
+			}
 			m.setEditorMessage(context.deserialize(jo.get("editorMessage"), String.class));
 			m.setAuthorMessage(context.deserialize(jo.get("authorMessage"), String.class));
 			return m;

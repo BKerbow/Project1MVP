@@ -4,6 +4,7 @@ import java.util.List;
 
 import dev.kerbow.models.Author;
 import dev.kerbow.models.Editor;
+import dev.kerbow.models.Genre;
 import dev.kerbow.models.Story;
 import dev.kerbow.repositories.StoryRepo;
 
@@ -40,7 +41,11 @@ public class StoryServices {
 		return this.repo.getAllByAuthor(a);
 	}
 	
-	public List<Story> getAllByGenreAndStatus(Integer genre, String status) {
+	public List<Story> getByType(String type){
+		return this.repo.getByType(type);
+	}
+	
+	public List<Story> getAllByGenreAndStatus(Genre genre, String status) {
 		return this.repo.getAllByGenreAndStatus(genre, status);
 	}
 	

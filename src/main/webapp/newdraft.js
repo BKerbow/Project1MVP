@@ -6,8 +6,8 @@ function submit(story){
         title: document.getElementById("title").value,
         description: document.getElementById("description").value,
         tagLine: document.getElementById("tag_line").value,
-        completionStatus: document.getElementById("draft_status").value,
         submissionDate: document.getElementById("submission_date").value,
+        draft: document.getElementById("draft").value,
         modified: true
     };
 
@@ -16,6 +16,7 @@ function submit(story){
     story.tagLine = newDraft.tagLine;
     story.completionStatus = newDraft.completionStatus;
     story.submissionDate = newDraft.submissionDate;
+    story.draft = newDraft.draft;
     story.modified = newDraft.modified;
     
     console.log("login info:" + newDraft);

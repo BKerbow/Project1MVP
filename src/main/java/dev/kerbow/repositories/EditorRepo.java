@@ -50,6 +50,19 @@ public class EditorRepo implements GenericRepo<Editor> {
 		return null;
 	}
 	
+	public Editor getByFirstName(String firstName) {
+		String sql = "select * from editors where first_name = ?";
+		try {
+			PreparedStatement ps = conn.prepareStatement(sql);
+			ps.setString(1, firstName);
+			ResultSet rs = ps.executeQuery();
+			if (rs.next()) return this.make(rs);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
 	public Editor getByUsernameAndPassword(String username, String password) {
 		String sql = "select * from editors where username = ? and \"password\" = ?;";
 		try {

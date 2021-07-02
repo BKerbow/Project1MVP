@@ -49,7 +49,7 @@ public class FrontControllerServlet extends HttpServlet {
 	}
 
 	public FrontControllerServlet() {
-		Utils.loadEntries();
+		GEJoinServices.loadEntries();
 	}
 
 	private Gson gson = new Gson();
@@ -95,6 +95,30 @@ public class FrontControllerServlet extends HttpServlet {
 			System.out.print(jsons[0] + " " + jsons[1]);
 			break;
 		}
+//		case "get_draft_requests": {
+//			System.out.println("grabbing draft requests");
+//			Editor e = (Editor) session.getAttribute("logged_in");
+//			List<Story> stories = StoryServices.getInstance().getAllWithDraftsForEditor(e);
+//			String[] jsons = new String[] {this.gson.toJson(stories), this.gson.toJson(e)};
+//			json = this.gson.toJson(e) + "|" + this.gson.toJson(stories);
+//			response.getWriter().append(json);
+//			System.out.print(jsons[0] + " " + jsons[1]);
+//			break;
+//		}
+		case "get_draft_requests": {
+			Editor e = (Editor) session.getAttribute("logged_in");
+			List<Story> stories = StoryServices.getInstance().getAllWithDraftsForEditor(e);
+			//json = this.gson.toJson(stories);
+			//response.getWriter().append(json);
+			
+			String flag = "general|";
+			if (e.getAssistant()) flag = "assistant|";
+			else if (e.getSenior()) flag = "senior|";
+			json = flag + this.gson.toJson(stories);
+			
+			response.getWriter().append(json);
+			break;
+		}
 		case "get_editor_messages":{
 			System.out.println("grabbing editor messages");
 			List<Messages> messages = new ArrayList<Messages>(new MessagesRepo().getAll().values());
@@ -137,14 +161,28 @@ public class FrontControllerServlet extends HttpServlet {
 				List<Story> stories = new ArrayList<Story>();
 				
 				for (Genre g : genres) {
-					if (e.getSenior()) {
-						stories.addAll(StoryServices.getInstance().getAllByGenreAndStatus(g.getId(), "approved_editor"));
-					} else if (e.getAssistant()) {
-						stories.addAll(StoryServices.getInstance().getAllByGenreAndStatus(g.getId(), "submitted"));
+					if(e.getSenior()) {
+						stories.addAll(new StoryRepo().getAllByGenreAndStatus(g, "approved_editor"));
+					} else if(e.getAssistant()) {
+						stories.addAll(new StoryRepo().getAllByGenreAndStatus(g, "submitted"));
 					} else {
 						String status = "approved_assistant";
-						Genre other = GenreServices.getInstance().getGenreForGeneralEditor(g);
-						stories.addAll(StoryServices.getInstance().getAllByGenreAndStatus(other.getId(), status));
+						if (g.getName().equals("fantasy")) {
+							Genre scienceFiction = new GenreRepo().getByName("science-fiction");
+							stories.addAll(new StoryRepo().getAllByGenreAndStatus(scienceFiction, status));
+						} else if (g.getName().equals("science-fiction")) {
+							Genre mystery = new GenreRepo().getByName("mystery");
+							stories.addAll(new StoryRepo().getAllByGenreAndStatus(mystery, status));
+						} else if (g.getName().equals("mystery")) {
+							Genre article = new GenreRepo().getByName("article");
+							stories.addAll(new StoryRepo().getAllByGenreAndStatus(article, status));
+						} else if (g.getName().equals("article")) {
+							Genre nonfiction = new GenreRepo().getByName("nonfiction");
+							stories.addAll(new StoryRepo().getAllByGenreAndStatus(nonfiction, status));
+						} else if (g.getName().equals("nonfiction")) {
+							Genre fantasy = new GenreRepo().getByName("fantasy");
+							stories.addAll(new StoryRepo().getAllByGenreAndStatus(fantasy, status));
+						}
 					}
 				}
 				
@@ -169,11 +207,6 @@ public class FrontControllerServlet extends HttpServlet {
 			response.getWriter().append(str + sj.toString());
 			break;
 		}
-//		case "get_message_from_session":{
-//			JsonObject sj = (JsonObject) session.getAttribute("message");
-//			response.getWriter().append(sj.toString());
-//			break;
-//		}
 		case "deny_story": {
 			Object logged_in = session.getAttribute("logged_in");
 			Story s = this.gson.fromJson(request.getReader(), Story.class);
@@ -194,95 +227,13 @@ public class FrontControllerServlet extends HttpServlet {
 			System.out.println("Requesting info!!! " + s);
 			break;
 		}
-		case "get_requests": {
-			Object logged_in = session.getAttribute("logged_in");
-			String[] receiverName = new String[2];
-			
-			if (logged_in instanceof Editor) {
-				Editor e = (Editor) logged_in;
-				receiverName[0] = e.getFirstName();
-				receiverName[1] = e.getLastName();
-			} else if (logged_in instanceof Author) {
-				Author a = (Author) logged_in;
-				receiverName[0] = a.getFirstName();
-				receiverName[1] = a.getLastName();
-			}
-			
-			List<Story> stories = StoryServices.getInstance().getAllByReceiverName(receiverName[0], receiverName[1]);
-			if (logged_in instanceof Author) {
-				json = "author|" + this.gson.toJson(stories);
-			} else if (logged_in instanceof Editor) {
-				json = "editor|" + this.gson.toJson(stories);
-			}
-			response.getWriter().append(json);
-			break;
-		}
-		case "get_draft_requests": {
-			Editor e = (Editor) session.getAttribute("logged_in");
-			List<Story> stories = StoryServices.getInstance().getAllWithDraftsForEditor(e);
-			json = this.gson.toJson(stories);
-			response.getWriter().append(json);
-			break;
-		}
-		case "save_response": {
-			Story s = this.gson.fromJson(request.getReader(), Story.class);
-			StoryServices.getInstance().updateStory(s);
-			break;
-		}
-		case "get_editor_main_labels": {
-			String[] counts = new String[4];
-			
-			Editor e = (Editor) session.getAttribute("logged_in");
-			if (e == null) System.out.println("get_editor_main_labels: editor null!!!!");
-			Set<Genre> genres = GEJoinServices.getGenres(e);
-			List<Story> stories = new ArrayList<Story>();
-			
-			for (Genre g : genres) {
-				if (e.getSenior()) {
-					stories.addAll(StoryServices.getInstance().getAllByGenreAndStatus(g.getId(), "approved_editor"));
-				} else if (e.getAssistant()) {
-					stories.addAll(StoryServices.getInstance().getAllByGenreAndStatus(g.getId(), "submitted"));
-				} else {
-					String status = "approved_assistant";
-					if (g.getName().equals("Sci-fi")) {
-						Genre fantasy = GenreServices.getInstance().getByName("Fantasy");
-						stories.addAll(StoryServices.getInstance().getAllByGenreAndStatus(fantasy.getId(), status));
-					} else if (g.getName().equals("Fantasy")) {
-						Genre horror = GenreServices.getInstance().getByName("Horror");
-						stories.addAll(StoryServices.getInstance().getAllByGenreAndStatus(horror.getId(), status));
-					} else if (g.getName().equals("Horror")) {
-						Genre scifi = GenreServices.getInstance().getByName("Sci-fi");
-						stories.addAll(StoryServices.getInstance().getAllByGenreAndStatus(scifi.getId(), status));
-					}
-				}
-			}
-			
-			List<Story> infoReqs = StoryServices.getInstance().getAllByReceiverName(e.getFirstName(), e.getLastName());
-			List<Story> draftReqs = StoryServices.getInstance().getAllWithDraftsForEditor(e);
-			
-			counts[0] = e.getFirstName() + " " + e.getLastName();
-			counts[1] = "" + stories.size();
-			counts[2] = "" + infoReqs.size();
-			counts[3] = "" + draftReqs.size();
-			
-			response.getWriter().append(this.gson.toJson(counts));
-			
-			break;
-		}
-		case "get_author_main_labels": {
-			String[] counts = new String[4];
-			Author a = (Author) session.getAttribute("logged_in");
-			if (a == null) System.out.println("get_author_main_labels: author null!!!!");
-			List<Story> stories = StoryServices.getInstance().getAllByAuthor(a.getId());
-			List<Story> infoReqs = StoryServices.getInstance().getAllByReceiverName(a.getFirstName(), a.getLastName());
-			counts[0] = a.getFirstName() + " " + a.getLastName();
-			counts[1] = "" + stories.size();
-			counts[2] = "" + infoReqs.size();
-			counts[3] = "";
-			
-			response.getWriter().append(this.gson.toJson(counts));
-			break;
-		}
+//	case "get_draft_requests": {
+//			Editor e = (Editor) session.getAttribute("logged_in");
+//			List<Story> stories = StoryServices.getInstance().getAllWithDraftsForEditor(e);
+//			json = this.gson.toJson(stories);
+//			response.getWriter().append(json);
+//			break;
+//		}
 		case "update_details": {
 			Story s = this.gson.fromJson(request.getReader(), Story.class);
 			StoryServices.getInstance().updateStory(s);
@@ -300,50 +251,6 @@ public class FrontControllerServlet extends HttpServlet {
 			s.setRequest(null);
 			s.setModified(false);
 			StoryServices.getInstance().updateStory(s);
-			break;
-		}
-		case "approve_draft": {
-			Story s = this.gson.fromJson(request.getReader(), Story.class);
-			String type = s.getType().getName();
-			System.out.println("Approving draft for type " + type);
-			switch (type) {
-				case "Novel":
-				case "Novella": {
-					Set<Editor> editors = GEJoinServices.getEditors(s.getGenre());
-					Integer count = s.getDraftApprovalCount();
-					count++;
-					s.setDraftApprovalCount(count);
-					float avg = (float) count / (float) editors.size();
-					if (avg > 0.5f) {
-						s.setApprovalStatus("Approved");
-						AuthorServices.getInstance().addPoints(s.getAuthor(), s.getType().getPoints());
-						StoryServices.getInstance().submitNextWaitingProposal(s.getAuthor());
-					}
-					StoryServices.getInstance().updateStory(s);
-					break;
-				}
-				case "Short Story": {
-					System.out.println("Short Story");
-					Integer count = s.getDraftApprovalCount();
-					count++;
-					s.setDraftApprovalCount(count);
-					if (count == 2) {
-						s.setApprovalStatus("Approved");
-						AuthorServices.getInstance().addPoints(s.getAuthor(), s.getType().getPoints());
-						StoryServices.getInstance().submitNextWaitingProposal(s.getAuthor());
-					}
-					StoryServices.getInstance().updateStory(s);
-					break;
-				}
-				case "Article": {
-					s.setApprovalStatus("Approved");
-					s.setDraftApprovalCount(1);
-					AuthorServices.getInstance().addPoints(s.getAuthor(), s.getType().getPoints());
-					StoryServices.getInstance().submitNextWaitingProposal(s.getAuthor());
-					StoryServices.getInstance().updateStory(s);
-					break;
-				}
-			}
 			break;
 		}
 		case "deny_draft": {
@@ -470,14 +377,14 @@ public class FrontControllerServlet extends HttpServlet {
 			System.out.println(session.getAttribute("story"));
 			System.out.println(s);
 			s.setAuthor(a);
-			new StoryRepo().update(s);
+			StoryServices.getInstance().updateStory(s);
 			System.out.println("Updated the old version with the new version!");
 			response.getWriter().append("authors.html");
 			} else if (logged_in instanceof Editor) {
 				System.out.println("I got the rejection notice!");
 				Story s = gson.fromJson(request.getReader(), Story.class);
 				Editor e = (Editor) session.getAttribute("logged_in");
-				new StoryRepo().update(s);
+				StoryServices.getInstance().updateStory(s);
 				response.getWriter().append("editors.html");
 			}
 			break;
@@ -503,10 +410,57 @@ public class FrontControllerServlet extends HttpServlet {
 			break;
 		}
 		
-		case "post_info_response":{
-			System.out.println("Posting Story Response!");
-			Messages m = gson.fromJson(request.getReader(), Messages.class);
-			new MessagesRepo().update(m);
+		case "post_info_request":{
+			System.out.println("Posting Story Request!");
+			JsonElement[] objs = gson.fromJson(request.getReader(), JsonElement[].class);
+			System.out.print(objs[1]);
+			Story s = gson.fromJson(objs[0], Story.class);
+			Messages m = gson.fromJson(objs[1], Messages.class);
+			new MessagesRepo().add(m);
+			break;
+		}
+		case "approve_draft": {
+			Story s = this.gson.fromJson(request.getReader(), Story.class);
+			String type = s.getType().getName();
+			System.out.println("Approving draft for type " + type);
+			switch (type) {
+				case "Novel":
+				case "Novella": {
+					Set<Editor> editors = GEJoinServices.getEditors(s.getGenre());
+					Integer count = s.getDraftApprovalCount();
+					count++;
+					s.setDraftApprovalCount(count);
+					float avg = (float) count / (float) editors.size();
+					if (avg > 0.5f) {
+						s.setApprovalStatus("Approved");
+						AuthorServices.getInstance().addPoints(s.getAuthor(), s.getType().getPoints());
+						StoryServices.getInstance().submitNextWaitingProposal(s.getAuthor());
+					}
+					StoryServices.getInstance().updateStory(s);
+					break;
+				}
+				case "Short Story": {
+					System.out.println("Short Story");
+					Integer count = s.getDraftApprovalCount();
+					count++;
+					s.setDraftApprovalCount(count);
+					if (count == 2) {
+						s.setApprovalStatus("Approved");
+						AuthorServices.getInstance().addPoints(s.getAuthor(), s.getType().getPoints());
+						StoryServices.getInstance().submitNextWaitingProposal(s.getAuthor());
+					}
+					StoryServices.getInstance().updateStory(s);
+					break;
+				}
+				case "Article": {
+					s.setApprovalStatus("Approved");
+					s.setDraftApprovalCount(1);
+					AuthorServices.getInstance().addPoints(s.getAuthor(), s.getType().getPoints());
+					StoryServices.getInstance().submitNextWaitingProposal(s.getAuthor());
+					StoryServices.getInstance().updateStory(s);
+					break;
+				}
+			}
 			break;
 		}
 		default: System.out.println("Sorry, I didn't get that POST flag."); break;

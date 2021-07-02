@@ -2,15 +2,23 @@ let url = "http://localhost:8080/Project1/FrontController"
 
 function submit(story){
 
-    let infoRequest = document.getElementById("infoReqest");
-    let jsons = [story, infoRequest.value];
+	let infoRequest = {
+        title: document.getElementById('title').value,
+        fromEditor: document.getElementById('fromEditor').value,
+        fromAuthor: document.getElementById('toAuthor').value,
+        receiveEditor: document.getElementById('receiveEditor').value,
+        editorMessage: document.getElementById("editorRequest").value
+    };
+
+    let jsons = [story, infoRequest];
     let json = JSON.stringify(jsons);
     
     console.log("json: " + json);
     let xhttp = new XMLHttpRequest();
     xhttp.open("POST", url + "/post_info_request", true);
-    xhttp.send(json);
     console.log(json);
+    xhttp.send(json);
+    
     
     xhttp.onreadystatechange = postData;
     

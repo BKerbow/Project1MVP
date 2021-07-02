@@ -52,6 +52,19 @@ public class AuthorRepo implements GenericRepo<Author> {
 		return null;
 	}
 	
+	public Author getByFirstName(String firstName) {
+		String sql = "select * from authors where first_name = ?;";
+		try {
+			PreparedStatement ps = conn.prepareStatement(sql);
+			ps.setString(1, firstName);
+			ResultSet rs = ps.executeQuery();
+			if (rs.next()) return this.make(rs);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
 	public Author getByUsernameAndPassword(String username, String password) {
 		String sql = "select * from authors where username = ? and \"password\" = ?;";
 		try {
@@ -129,4 +142,5 @@ public class AuthorRepo implements GenericRepo<Author> {
 		a.setPassword(rs.getString("password"));
 		return a;
 	}
+
 }

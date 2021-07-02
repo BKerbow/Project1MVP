@@ -117,6 +117,7 @@ function getStories(){
                     tr.appendChild(tdRejectButton);
 
                     //Info Button Handling
+                    console.log(author, senior, overdue);
                     if((author || senior) || ((overdue == lock) && (assistant || general))){
                         tdInfoButton.onclick = function sendInfoRequest(){
                             console.log("button pressed" + story);
@@ -144,7 +145,6 @@ function getStories(){
                             }
                         }
                     }
-
                     //Approval Button Handling does
                     if ((author || senior) || ((overdue == lock) && (assistant || general))){
                         tdApproveButton.onclick = function sendApproval(){
@@ -183,6 +183,226 @@ function getStories(){
                         }
                     }
                     //Reject Button Handling
+                    
+                    if((author || senior) || ((overdue == lock) && (assistant || general))){
+                        tdRejectButton.onclick = function sendInfoRequest(){
+                            console.log("button pressed" + story);
+                            let json = JSON.stringify(story);
+                            console.log("json: " + json);
+
+                            let xhttp = new XMLHttpRequest();
+                            xhttp.open("POST", url + "/save_story_to_session", true);
+                            xhttp.send(json);
+
+                            console.log("sent json");
+                            xhttp.onreadystatechange = sendInfoData;
+
+                            function sendInfoData(){
+                                console.log(xhttp.readyState);
+                                console.log(xhttp.status);
+                                if(xhttp.readyState == 4){
+                                    if(xhttp.status == 200){
+                                        if(xhttp.responseText == 'saved'){
+                                            console.log("saved story!");
+                                            window.location.href = "rejectscript.html";
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                authorTable.appendChild(tr);
+                authorTable.setAttribute("border", 2);
+                }
+                dataSection.appendChild(authorTable);
+            }
+        }
+    }
+}
+
+function getDrafts(){
+    console.log("displaying your committee's stories");
+    let xhttp = new XMLHttpRequest();
+    xhttp.open("GET", url + "/get_draft_requests", true);
+    xhttp.send();
+
+    let dataSection = document.getElementById("draftsData");
+    dataSection.innerHTML = '';
+
+    xhttp.onreadystatechange = () => {
+        console.log(xhttp.readyState);
+        console.log(xhttp.status);
+        if(xhttp.readyState == 4){
+            if(xhttp.status == 200){
+
+                let dataSection = document.getElementById('draftsData');
+                dataSection.innerHTML = '';
+
+                let strs = xhttp.responseText.split("|");
+                logged_in = strs[0];
+                console.log(strs[0]);
+                
+                let stories = JSON.parse(strs[1]);
+                console.log(strs[1])
+
+                let lock = false;
+                let senior = logged_in == "senior";
+                let general = logged_in == "general";
+                let assistant = logged_in == "assistant";
+                let author = logged_in == "author";
+
+                //create table
+                let authorTable = document.createElement('table');
+                authorTable.id = 'authorTable';
+                for (let story of stories){
+                    
+                    let overdue = checkOverdue(story);
+                    if (overdue) lock = true;
+                    //create table header row
+                    let thRow = document.createElement('tr');
+                    let tHeaders = ['Overdue', 'Title', 'Genre', 'Story Type', 'Description',
+                                    'Tag Line', 'Completion Date', 'Approval Status', 
+                                    'Editor Functions'];
+                    for (let h of tHeaders){
+                        let th = document.createElement('th');
+                        th.innerHTML = h;
+                        thRow.appendChild(th);
+                    }
+
+                    authorTable.append(thRow);
+
+                    //Iterate through the stories and create a table row with the date we want
+                    //for (story of stories){
+                    let tr = document.createElement('tr');
+
+                    //Overdue
+                    let tdOverDue = document.createElement('td');
+                    if(overdue && !author){
+                        tdOverDue.innerHTML = 'OVERDUE!';
+                    } else {
+                        tdOverDue.innerHTML = 'NOT OVERDUE';
+                    }
+                    tr.appendChild(tdOverDue);
+
+                    //Title
+                    let tdTitle = document.createElement('td');
+                    tdTitle.innerHTML = story.title;
+                    tr.appendChild(tdTitle);
+
+                    //Genre
+                    let tdGenre = document.createElement('td');
+                    tdGenre.innerHTML = story.genre.name;
+                    tr.appendChild(tdGenre);
+
+                    //Story Type
+                    let tdStoryType = document.createElement('td');
+                    tdStoryType.innerHTML = story.type.name;
+                    tr.appendChild(tdStoryType);
+
+                    //Description
+                    let tdDescription = document.createElement('td');
+                    tdDescription.innerHTML = story.description;
+                    tr.appendChild(tdDescription);
+
+                    //Tag Line
+                    let tdTagLine = document.createElement('td');
+                    tdTagLine.innerHTML = story.tagLine;
+                    tr.appendChild(tdTagLine);
+
+                    //Completion Date
+                    let tdCompletionDate = document.createElement('td');
+                    tdCompletionDate.innerHTML = story.completionDate;
+                    tr.appendChild(tdCompletionDate);
+                    
+                    //Approval Status
+                    let tdApprovalStatus = document.createElement('td');
+                    tdApprovalStatus.innerHTML = story.approvalStatus;
+                    tr.appendChild(tdApprovalStatus);
+                    
+                    //Info Request
+                    let tdInfoButton = document.createElement('button');
+                    tdInfoButton.innerHTML = 'Request Info';
+                    tr.appendChild(tdInfoButton);
+                    
+                    //Approve
+                    let tdApproveButton = document.createElement('button');
+                    tdApproveButton.innerHTML = "Approve";
+                    tr.appendChild(tdApproveButton);
+                    
+                    //Reject
+                    let tdRejectButton = document.createElement('button');
+                    tdRejectButton.innerHTML = 'Reject'
+                    tr.appendChild(tdRejectButton);
+
+                    //Info Button Handling
+                    console.log(author, senior, assistant, general, overdue);
+                    if((author || senior) || ((overdue == lock) && (assistant || general))){
+                        tdInfoButton.onclick = function sendInfoRequest(){
+                            console.log("button pressed" + story);
+                            let json = JSON.stringify(story);
+                            console.log("json: " + json);
+
+                            let xhttp = new XMLHttpRequest();
+                            xhttp.open("POST", url + "/save_story_to_session", true);
+                            xhttp.send(json);
+
+                            console.log("sent json");
+                            xhttp.onreadystatechange = sendInfoData;
+
+                            function sendInfoData(){
+                                console.log(xhttp.readyState);
+                                console.log(xhttp.status);
+                                if(xhttp.readyState == 4){
+                                    if(xhttp.status == 200){
+                                        if(xhttp.responseText == 'saved'){
+                                            console.log("saved story!");
+                                            window.location.href = "inforequest.html";
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    //Approval Button Handling does
+                    if ((author || senior) || ((overdue == lock) && (assistant || general))){
+                        tdApproveButton.onclick = function sendApproval(){
+
+                            console.log("button pressed" + story);
+                            let json = JSON.stringify(story);
+                            console.log("json: " + json);
+
+                            let xhttp = new XMLHttpRequest();
+                            xhttp.open("POST", url + "/approve_draft", true);
+                            xhttp.send(json);
+                    
+                            console.log("sent json");
+                            xhttp.onreadystatechange = sendData;
+
+                            function sendData(){
+                                console.log(xhttp.readyState);
+                                console.log(xhttp.status);
+                                    if(xhttp.readyState == 4){
+                                        if(xhttp.status == 200){
+                                        let xhttp = new XMLHttpRequest();
+                                        xhttp.open("POST", url + "/save_story_to_session", true);
+                                        xhttp.send(JSON.stringify(story));
+                                    
+                                        xhttp.onreadystatechange = () => {
+                                        if (xhttp.readyState == 4) {
+                                            if (xhttp.status == 200) {
+                                                if (xhttp.responseText == "saved") {
+                                                    console.log("saved story!");
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    //Reject Button Handling
+                    
                     if((author || senior) || ((overdue == lock) && (assistant || general))){
                         tdRejectButton.onclick = function sendInfoRequest(){
                             console.log("button pressed" + story);

@@ -8,11 +8,11 @@ function reject(story){
 
     story.reason = rejection.reason;
 
-    let json = JSON.stringify(story);
+    let json = JSON.stringify(rejection);
     console.log("json: " + json);
 
     let xhttp = new XMLHttpRequest();
-    xhttp.open("POST", url + "/submit_draft_update", true);
+    xhttp.open("GET", url + "/deny_story", true);
     xhttp.send(json);
 
     xhttp.onreadystatechange = receiveData;

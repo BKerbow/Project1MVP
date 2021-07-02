@@ -434,6 +434,7 @@ public class Story {
 			}
 			// TODO: move this to StoryTypeServices!!!
 			JsonElement tElem = jo.get("type");
+			System.out.print(tElem);
 			if (tElem.isJsonObject()) {
 				story.setType(context.deserialize(tElem, StoryType.class));
 			} else {

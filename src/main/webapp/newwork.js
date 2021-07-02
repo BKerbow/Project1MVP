@@ -11,13 +11,13 @@ function submit(){
         submissionDate: document.getElementById("submission_date").value
     };
 
-    story.title = authorSubmit.title;
-    story.genre = authorSubmit.genre;
-    story.storyType = authorSubmit.storyType;
-    storyDescription = authorSubmit.storyDescription.
-    story.tagLine = authorSubmit.tagLine;
-    story.completionStatus = authorSubmit.completionStatus;
-    story.submissionDate = authorSubmit.submissionDate;
+    //story.title = authorSubmit.title;
+    //story.genre = authorSubmit.genre;
+    //story.storyType = authorSubmit.storyType;
+    //storyDescription = authorSubmit.storyDescription.
+    //story.tagLine = authorSubmit.tagLine;
+    //story.completionStatus = authorSubmit.completionStatus;
+    //story.submissionDate = authorSubmit.submissionDate;
 
     console.log("new story info: " + authorSubmit);
     let json = JSON.stringify(authorSubmit);
